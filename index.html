@@ -1,10 +1,394 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en" style="width:100%; height:100%;">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>An Vu's Resume</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Vu - Interactive CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling portfolio. The structure flows from a high-level summary to detailed proof points. It begins with a hero section for immediate impact, followed by animated key metrics to quantify achievements. A skills chart offers a quick visual assessment. The core is an interactive, unified timeline for work and projects, allowing users to explore details without being overwhelmed. This non-linear, deep-dive approach is more engaging for recruiters than a static list, encouraging exploration and highlighting a clear progression of capabilities. -->
+    <!-- Visualization & Content Choices: 1. Key Metrics: Report Info (10k reports, 20% reduction, 85% accuracy) -> Goal: Inform/Impact -> Viz: Animated Counters -> Interaction: Trigger on scroll -> Justification: Creates a dynamic and engaging first impression of key achievements -> Method: JS IntersectionObserver. 2. Skills: Report Info (Python, SQL, Power BI, etc.) -> Goal: Compare/Inform -> Viz: Horizontal Bar Chart -> Interaction: Hover tooltips for details -> Justification: Visually represents proficiency and is more engaging than a static list -> Library: Chart.js/Canvas. 3. Experience/Projects: Report Info (Job/Project descriptions) -> Goal: Organize/Inform -> Viz: Interactive Vertical Timeline -> Interaction: Click to expand/collapse details -> Justification: Combines work and projects into a cohesive narrative, saves vertical space, and allows user-controlled detail exploration -> Method: HTML/CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 400px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .timeline-item .details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .timeline-item.active .details {
+            max-height: 500px;
+        }
+        .nav-link.active {
+            color: #2563eb;
+            font-weight: 700;
+        }
+    </style>
 </head>
-  <body style="width:100%; height:100%; margin:0;">
-    <iframe src="https://docs.google.com/gview?url=https://github.com/tiVu99/resume/raw/master/An_Vu__CV.pdf&embedded=true" style="width:100%; height:100%;" frameborder="0"></iframe>
-  </body>
+<body class="text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <span class="text-xl font-bold text-slate-800">An Vu</span>
+                </div>
+                <nav class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Home</a>
+                        <a href="#highlights" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Highlights</a>
+                        <a href="#skills" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Skills</a>
+                        <a href="#experience" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Experience</a>
+                        <a href="#education" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Education</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-16">
+        <section id="home" class="py-20 md:py-32 bg-white">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">An Vu</h1>
+                <p class="mt-4 text-lg md:text-xl text-slate-600">Dynamic and detail-oriented Computer Science graduate with hands-on experience in data analysis, software development, and business intelligence.</p>
+                <div class="mt-8 flex justify-center items-center space-x-6 text-sm">
+                    <a href="mailto:anvutien99@gmail.com" class="font-medium text-blue-600 hover:text-blue-800">anvutien99@gmail.com</a>
+                    <span class="text-slate-400">|</span>
+                    <a href="https://linkedin.com/in/an-tien-vu" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:text-blue-800">LinkedIn</a>
+                    <span class="text-slate-400">|</span>
+                    <span class="font-medium text-slate-600">+84 942391999</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="highlights" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold tracking-tight text-slate-900">Career Highlights</h2>
+                     <p class="mt-2 text-lg text-slate-600">A snapshot of key achievements and impactful results delivered.</p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <span id="metric1" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">+</span>
+                        <p class="mt-2 text-base text-slate-500">ESG Reports Processed</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <span id="metric2" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">%</span>
+                        <p class="mt-2 text-base text-slate-500">Reduction in Manual Work</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <span id="metric3" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">%</span>
+                        <p class="mt-2 text-base text-slate-500">Attrition Prediction Accuracy</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Core Competencies</h2>
+                    <p class="mt-2 text-lg text-slate-600">This chart outlines my key technical skills. Hover over the bars to see more details about my experience with each technology. This visualization provides a quick overview of the tools I use to analyze data, build solutions, and drive insights.</p>
+                </div>
+                <div class="mt-12 chart-container">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="py-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Professional Journey</h2>
+                    <p class="mt-2 text-lg text-slate-600">This timeline combines my work experience and key projects, showcasing a continuous path of growth and application. Click on any title to expand and see the details of my responsibilities and achievements in that role or project.</p>
+                </div>
+                <div class="mt-12 space-y-8">
+                    
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Education & Certifications</h2>
+                    <p class="mt-2 text-lg text-slate-600">My academic background and professional certifications.</p>
+                </div>
+                <div id="education-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 An Vu. All Rights Reserved.</p>
+            <p class="text-sm text-slate-400 mt-2">Interactive CV built to showcase skills and experience.</p>
+        </div>
+    </footer>
+
+    <script>
+        const experienceData = [
+            {
+                type: 'Work',
+                title: 'Data Operator',
+                company: 'Corporate Register LTD',
+                date: 'Apr 2022 - Sep 2024',
+                location: 'Remote',
+                details: [
+                    'Labeled and categorized ESG reports for 10,000+ companies, streamlining data retrieval via Microsoft Access.',
+                    'Automated data extraction and transformation processes using Python, reducing manual work by 20%.',
+                    'Created Power BI dashboards for ESG metric visualization and benchmarking.'
+                ]
+            },
+            {
+                type: 'Project',
+                title: 'Auto-Summarizer for Financial Reports',
+                company: 'Personal Project',
+                date: 'Project',
+                tech: 'OpenAI API, LangChain, Python, Pandas',
+                details: [
+                    'Developed a pipeline to scrape and summarise quarterly earnings reports using OpenAI and LangChain.',
+                    'Enabled executives to grasp key insights quickly, cutting down report reading time by 70%.'
+                ]
+            },
+            {
+                type: 'Work',
+                title: 'Remote Data Analytics Intern',
+                company: 'Hash Analytics',
+                date: 'Jun 2020 - Sep 2020',
+                location: 'London',
+                details: [
+                    'Conducted in-depth data analysis on employee datasets to identify key drivers of attrition and predict future trends, achieving 85% accuracy and empowering HR teams with actionable insights.'
+                ]
+            },
+            {
+                type: 'Project',
+                title: 'E-commerce Sales Performance Dashboard',
+                company: 'Personal Project',
+                date: 'Project',
+                tech: 'Power BI, SQL, Excel',
+                details: [
+                    'Developed interactive Power BI dashboards to visualize e-commerce sales KPIs (profit, order count, product performance).',
+                    'Enabled data-driven insights into sales trends and customer segments, guiding marketing strategy and inventory decisions.'
+                ]
+            },
+            {
+                type: 'Project',
+                title: 'HR Analytics: Employee Attrition Problem',
+                company: 'Personal Project',
+                date: 'Project',
+                tech: 'Python, Jupyter Notebook, Tableau, Git',
+                details: [
+                    'Conducted in-depth data analysis on employee datasets to identify key drivers of attrition and predict future trends with 85% accuracy.',
+                    'Utilized Python libraries such as Pandas and Scikit-learn for data cleaning, feature engineering, and predictive modeling.',
+                    'Created interactive dashboards in Tableau to visualize findings, improving stakeholder decision-making.'
+                ]
+            },
+            {
+                type: 'Work',
+                title: 'Administrative Services Intern',
+                company: 'Eastleigh College',
+                date: 'Jun 2019 - Sep 2019',
+                location: 'Southampton',
+                details: [
+                    'Executed data entry and categorization for 150+ student applications daily with 99% accuracy, enhancing enrollment efficiency by 10%.',
+                    'Organized and facilitated daily tutor meetings and ensured proper documentation for student interviews.'
+                ]
+            }
+        ];
+
+        const educationData = [
+            {
+                degree: 'MSc Global Financial Trading with EPP',
+                institution: 'Coventry University London',
+                date: 'Sep 2021 - Jun 2023'
+            },
+            {
+                degree: 'BSc in Computer Science',
+                institution: 'University of Southampton',
+                date: 'Sep 2018 - Jun 2021'
+            },
+            {
+                degree: 'A-Level Programme',
+                institution: 'Bellerbys College',
+                date: 'Sep 2016 - Jun 2018',
+                details: 'GPA: A*A*A'
+            },
+            {
+                degree: 'Data Analyst in Python Certificate',
+                institution: 'Codecademy',
+                date: 'Jan 2020'
+            },
+            {
+                degree: 'Silver Certificate',
+                institution: 'UKMT Senior Mathematical Challenge 2017',
+                date: 'Award'
+            },
+            {
+                degree: '40% Tuition Scholarship',
+                institution: 'Bellerbys College',
+                date: 'Award'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const experienceContainer = document.querySelector('#experience .space-y-8');
+            experienceData.forEach(item => {
+                const techStack = item.tech ? `<p class="mt-2 text-xs font-semibold text-blue-600 tracking-wider uppercase">${item.tech}</p>` : '';
+                const itemHTML = `
+                    <div class="timeline-item relative pl-8 sm:pl-12 py-4 group cursor-pointer border-l-2 border-slate-200 hover:border-blue-500">
+                        <div class="absolute top-5 left-[-9px] w-4 h-4 bg-white border-2 border-slate-200 rounded-full group-hover:border-blue-500 transition-colors"></div>
+                        <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
+                        <p class="text-sm font-medium text-slate-500">${item.company} | ${item.date}</p>
+                        ${techStack}
+                        <div class="details text-sm text-slate-600 mt-2">
+                            <ul class="list-disc list-inside space-y-1">
+                                ${item.details.map(d => `<li>${d}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                experienceContainer.innerHTML += itemHTML;
+            });
+
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    item.classList.toggle('active');
+                });
+            });
+
+            const educationContainer = document.getElementById('education-container');
+             educationData.forEach(item => {
+                const detailsHTML = item.details ? `<p class="mt-1 text-sm font-bold text-blue-600">${item.details}</p>` : '';
+                const itemHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-slate-800">${item.degree}</h3>
+                        <p class="text-sm text-slate-500">${item.institution}</p>
+                        <p class="text-sm text-slate-400 mt-1">${item.date}</p>
+                        ${detailsHTML}
+                    </div>
+                `;
+                educationContainer.innerHTML += itemHTML;
+            });
+            
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(skillsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Python', 'SQL', 'Power BI', 'Tableau', 'Gen AI (OpenAI, LangChain)', 'Data Analysis', 'Process Automation'],
+                    datasets: [{
+                        label: 'Skill Proficiency',
+                        data: [90, 85, 80, 75, 70, 90, 85],
+                        backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += 'Advanced Proficiency';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                             display: false
+                        },
+                        y: {
+                           grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            const animateValue = (obj, start, end, duration) => {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            const metric1 = document.getElementById('metric1');
+            const metric2 = document.getElementById('metric2');
+            const metric3 = document.getElementById('metric3');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateValue(metric1, 0, 10000, 2000);
+                        animateValue(metric2, 0, 20, 2000);
+                        animateValue(metric3, 0, 85, 2000);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(document.getElementById('highlights'));
+
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const activateNavLink = (id) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+
+            const sectionObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        activateNavLink(entry.target.id);
+                    }
+                });
+            }, { rootMargin: '-30% 0px -70% 0px'});
+
+            sections.forEach(section => sectionObserver.observe(section));
+        });
+    </script>
+</body>
 </html>
