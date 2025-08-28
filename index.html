@@ -3,392 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>An Vu - Interactive CV</title>
+    <title>An Vu | Data Specialist Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: A single-page, vertical-scrolling portfolio. The structure flows from a high-level summary to detailed proof points. It begins with a hero section for immediate impact, followed by animated key metrics to quantify achievements. A skills chart offers a quick visual assessment. The core is an interactive, unified timeline for work and projects, allowing users to explore details without being overwhelmed. This non-linear, deep-dive approach is more engaging for recruiters than a static list, encouraging exploration and highlighting a clear progression of capabilities. -->
-    <!-- Visualization & Content Choices: 1. Key Metrics: Report Info (10k reports, 20% reduction, 85% accuracy) -> Goal: Inform/Impact -> Viz: Animated Counters -> Interaction: Trigger on scroll -> Justification: Creates a dynamic and engaging first impression of key achievements -> Method: JS IntersectionObserver. 2. Skills: Report Info (Python, SQL, Power BI, etc.) -> Goal: Compare/Inform -> Viz: Horizontal Bar Chart -> Interaction: Hover tooltips for details -> Justification: Visually represents proficiency and is more engaging than a static list -> Library: Chart.js/Canvas. 3. Experience/Projects: Report Info (Job/Project descriptions) -> Goal: Organize/Inform -> Viz: Interactive Vertical Timeline -> Interaction: Click to expand/collapse details -> Justification: Combines work and projects into a cohesive narrative, saves vertical space, and allows user-controlled detail exploration -> Method: HTML/CSS/JS. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            background: linear-gradient(-45deg, #111827, #1f2937, #374151, #4b5563);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 400px;
-            width: 100%;
-            max-width: 800px;
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        .timeline-item .details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
+
+        .section-title {
+            border-bottom: 2px solid #374151; /* gray-700 */
         }
-        .timeline-item.active .details {
-            max-height: 500px;
+        
+        /* Reveal on scroll animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
-        .nav-link.active {
-            color: #2563eb;
-            font-weight: 700;
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: #22d3ee; /* cyan-400 */
+            border-bottom-color: #22d3ee;
         }
     </style>
 </head>
-<body class="text-slate-700">
+<body class="text-gray-200">
 
-    <header class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-sm shadow-md">
+        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex-shrink-0">
-                    <span class="text-xl font-bold text-slate-800">An Vu</span>
+                <div class="text-2xl font-bold text-white">AV</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="nav-link text-gray-300 pb-1">About</a>
+                    <a href="#experience" class="nav-link text-gray-300 pb-1">Experience</a>
+                    <a href="#projects" class="nav-link text-gray-300 pb-1">Projects</a>
+                    <a href="#skills-education" class="nav-link text-gray-300 pb-1">Skills</a>
                 </div>
-                <nav class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Home</a>
-                        <a href="#highlights" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Highlights</a>
-                        <a href="#skills" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Skills</a>
-                        <a href="#experience" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Experience</a>
-                        <a href="#education" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600">Education</a>
-                    </div>
-                </nav>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="pt-16">
-        <section id="home" class="py-20 md:py-32 bg-white">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">An Vu</h1>
-                <p class="mt-4 text-lg md:text-xl text-slate-600">Dynamic and detail-oriented Computer Science graduate with hands-on experience in data analysis, software development, and business intelligence.</p>
-                <div class="mt-8 flex justify-center items-center space-x-6 text-sm">
-                    <a href="mailto:anvutien99@gmail.com" class="font-medium text-blue-600 hover:text-blue-800">anvutien99@gmail.com</a>
-                    <span class="text-slate-400">|</span>
-                    <a href="https://linkedin.com/in/an-tien-vu" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:text-blue-800">LinkedIn</a>
-                    <span class="text-slate-400">|</span>
-                    <span class="font-medium text-slate-600">+84 942391999</span>
-                </div>
+    <!-- Main Container -->
+    <div class="container mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
+
+        <!-- Header Section -->
+        <header class="text-center my-16">
+            <h1 class="text-5xl sm:text-6xl font-bold text-white">AN VU</h1>
+            <p class="text-xl text-cyan-400 font-medium mt-4"><span id="typed-subtitle"></span></p>
+             <div class="mt-6 flex justify-center items-center space-x-6 text-sm text-gray-400">
+                <a href="mailto:anvutien99@gmail.com" class="flex items-center hover:text-cyan-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Email
+                </a>
+                 <a href="tel:+84942391999" class="flex items-center hover:text-cyan-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    Phone
+                </a>
+                <a href="https://linkedin.com/in/an-tien-vu" target="_blank" rel="noopener noreferrer" class="flex items-center hover:text-cyan-400 transition-colors">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    LinkedIn
+                </a>
             </div>
+        </header>
+
+        <!-- About Me Section -->
+        <section id="about" class="mb-16 reveal">
+            <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">About Me</h2>
+            <p class="text-gray-300 leading-relaxed text-lg">
+                Bilingual Vietnamese-English data specialist experienced in content monitoring, piracy detection, and quality assurance. Skilled in n8n and AI-powered workflows to search multiple platforms, track infringing content, and prepare structured reports. Proven ability to work accurately and objectively with high-volume, repetitive tasks.
+            </p>
         </section>
 
-        <section id="highlights" class="py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                     <h2 class="text-3xl font-bold tracking-tight text-slate-900">Career Highlights</h2>
-                     <p class="mt-2 text-lg text-slate-600">A snapshot of key achievements and impactful results delivered.</p>
-                </div>
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <div class="bg-white p-8 rounded-lg shadow-md">
-                        <span id="metric1" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">+</span>
-                        <p class="mt-2 text-base text-slate-500">ESG Reports Processed</p>
+        <!-- Work Experience Section -->
+        <section id="experience" class="mb-16 reveal">
+            <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">Work Experience</h2>
+            <div class="space-y-8">
+                <!-- Job Cards -->
+                <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
+                        <h3 class="text-xl font-semibold text-white">Gen AI Data Annotation Specialist</h3>
+                        <p class="text-sm text-gray-400 mt-1 sm:mt-0">Feb 2025 - Present</p>
                     </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md">
-                        <span id="metric2" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">%</span>
-                        <p class="mt-2 text-base text-slate-500">Reduction in Manual Work</p>
+                    <p class="text-md text-cyan-400 font-medium mb-3">iMerit Scholars (Remote)</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Reviewed and tagged sensitive text, images, and videos for personally identifiable information (PII) using Meta SRT Halo and bounding box tools.</li>
+                        <li>Applied detailed content guidelines to ensure safety and compliance, achieving 95% accuracy across multilingual datasets.</li>
+                        <li>Collaborated with language leads and project managers to maintain quality standards in AI training data.</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
+                        <h3 class="text-xl font-semibold text-white">Data Operator</h3>
+                        <p class="text-sm text-gray-400 mt-1 sm:mt-0">Apr 2022 - Sep 2024</p>
                     </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md">
-                        <span id="metric3" class="text-4xl font-bold text-blue-600">0</span><span class="text-4xl font-bold text-blue-600">%</span>
-                        <p class="mt-2 text-base text-slate-500">Attrition Prediction Accuracy</p>
+                    <p class="text-md text-cyan-400 font-medium mb-3">Corporate Register LTD (Remote)</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Classified and quality-checked 10,000+ ESG reports, ensuring consistency, accuracy, and proper categorization.</li>
+                        <li>Applied structured data policies and formatting standards to maintain high data integrity.</li>
+                        <li>Automated repetitive workflows in Python, reducing manual work by 20% while minimizing error rates.</li>
+                        <li>Ensured compliance with company standards when reviewing large-scale datasets.</li>
+                    </ul>
+                </div>
+                 <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
+                        <h3 class="text-xl font-semibold text-white">Administrative Services Intern</h3>
+                        <p class="text-sm text-gray-400 mt-1 sm:mt-0">Jun 2019 - Sep 2019</p>
+                    </div>
+                    <p class="text-md text-cyan-400 font-medium mb-3">Eastleigh College (Southampton)</p>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2">
+                        <li>Processed 150+ student applications daily with 99% accuracy under strict data handling procedures.</li>
+                        <li>Managed sensitive student information, ensuring confidentiality and compliance.</li>
+                        <li>Coordinated documentation and scheduling for interviews, demonstrating organizational precision.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="mb-16 reveal">
+            <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <!-- Project Cards -->
+                <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg flex flex-col transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <h3 class="text-xl font-semibold text-white mb-2">Multi-Platform Viral Content Detection</h3>
+                    <p class="text-gray-300 leading-relaxed flex-grow mb-4">Developed an n8n automation workflow integrated with Apify actors to monitor TikTok, Instagram, YouTube, and Twitter for trending content. Collected and processed platform data in real time, identifying high-engagement or relevant content based on pre-set criteria. Logged URLs, titles, and timestamps into Google Sheets for centralized reporting and tracking. Automated alerts via email and dashboard updates to enable rapid review and decision-making.</p>
+                    <div class="mt-auto pt-4 border-t border-gray-700">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">n8n</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Apify</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Platform APIs</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Google Sheets API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg flex flex-col transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <h3 class="text-xl font-semibold text-white mb-2">Automated LinkedIn Job Listings Evaluation</h3>
+                    <p class="text-gray-300 leading-relaxed flex-grow mb-4">Automated LinkedIn profile and job post data extraction using Bright Data. Scored candidates based on their resumes and job requirements using OpenAI, providing actionable insights.</p>
+                     <div class="mt-auto pt-4 border-t border-gray-700">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">n8n</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Bright Data</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">OpenAI API</span>
+                             <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Google Sheets</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800/50 p-6 rounded-lg shadow-lg flex flex-col md:col-span-2 transition-transform transform hover:scale-105 hover:shadow-cyan-500/10">
+                    <h3 class="text-xl font-semibold text-white mb-2">HR Analytics: Employee Attrition Problem</h3>
+                    <p class="text-gray-300 leading-relaxed flex-grow mb-4">Conducted in-depth data analysis on employee datasets to identify key drivers of attrition and predict future trends with 85% accuracy, empowering HR teams with actionable insights. Utilized Python libraries such as Pandas and Scikit-learn for data cleaning, feature engineering, and predictive modelling. Created interactive dashboards in Tableau to visualize findings, improving stakeholder decision-making.</p>
+                     <div class="mt-auto pt-4 border-t border-gray-700">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Python</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Jupyter Notebook</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Tableau</span>
+                            <span class="bg-cyan-900/50 text-cyan-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Git</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="skills" class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Core Competencies</h2>
-                    <p class="mt-2 text-lg text-slate-600">This chart outlines my key technical skills. Hover over the bars to see more details about my experience with each technology. This visualization provides a quick overview of the tools I use to analyze data, build solutions, and drive insights.</p>
+        <!-- Skills & Education Section -->
+        <section id="skills-education" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 mb-16 reveal">
+            <!-- Skills -->
+            <div>
+                <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">Skills</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-100 mb-3 text-lg">Technical</h4>
+                        <div class="flex flex-wrap gap-3">
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Python</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">SQL</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Tableau</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Power BI</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Jira</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Google Analytics</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Gen AI</span>
+                             <span class="bg-gray-700 text-gray-200 text-sm font-medium px-4 py-2 rounded-md transition-transform transform hover:scale-110 hover:bg-cyan-500 hover:text-white">Microsoft Office</span>
+                        </div>
+                    </div>
+                     <div>
+                        <h4 class="font-semibold text-gray-100 mb-3 text-lg">Languages</h4>
+                         <p class="text-gray-300"><strong>Vietnamese:</strong> Native proficiency</p>
+                         <p class="text-gray-300"><strong>English:</strong> Full professional proficiency</p>
+                         <p class="text-gray-300"><strong>Chinese:</strong> Elementary proficiency</p>
+                    </div>
                 </div>
-                <div class="mt-12 chart-container">
-                    <canvas id="skillsChart"></canvas>
+            </div>
+            <!-- Education -->
+            <div>
+                <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">Education</h2>
+                <div class="space-y-6 border-l-2 border-gray-700 pl-6">
+                     <div class="relative">
+                        <div class="absolute -left-[35px] top-1.5 h-4 w-4 rounded-full bg-cyan-400"></div>
+                        <h4 class="font-semibold text-gray-100">MSc Global Financial Trading with EPP</h4>
+                        <p class="text-sm text-gray-400">Coventry University London | 2021 - 2023</p>
+                    </div>
+                     <div class="relative">
+                        <div class="absolute -left-[35px] top-1.5 h-4 w-4 rounded-full bg-cyan-400"></div>
+                        <h4 class="font-semibold text-gray-100">BSc in Computer Science</h4>
+                        <p class="text-sm text-gray-400">University of Southampton | 2018 - 2021</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[35px] top-1.5 h-4 w-4 rounded-full bg-cyan-400"></div>
+                        <h4 class="font-semibold text-gray-100">A-Level Programme</h4>
+                        <p class="text-sm text-gray-400">Bellerbys College | 2016 - 2018</p>
+                        <p class="text-sm text-gray-300 mt-1">GPA: A*A*A</p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <section id="experience" class="py-20">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Professional Journey</h2>
-                    <p class="mt-2 text-lg text-slate-600">This timeline combines my work experience and key projects, showcasing a continuous path of growth and application. Click on any title to expand and see the details of my responsibilities and achievements in that role or project.</p>
-                </div>
-                <div class="mt-12 space-y-8">
-                    
-                </div>
-            </div>
+        
+        <!-- Awards Section -->
+        <section id="awards" class="reveal">
+             <h2 class="text-3xl font-bold text-white pb-2 mb-6 section-title">Awards</h2>
+             <ul class="list-disc list-inside text-gray-300 space-y-2 text-lg">
+                <li>40% Tuition Scholarship by Bellerbys College</li>
+                <li>Silver Certificate by UKMT Senior Mathematical Challenge 2017</li>
+             </ul>
         </section>
-
-        <section id="education" class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Education & Certifications</h2>
-                    <p class="mt-2 text-lg text-slate-600">My academic background and professional certifications.</p>
-                </div>
-                <div id="education-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-slate-800 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 An Vu. All Rights Reserved.</p>
-            <p class="text-sm text-slate-400 mt-2">Interactive CV built to showcase skills and experience.</p>
-        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="text-center py-8 bg-gray-900/50 mt-12 border-t border-gray-800">
+        <p class="text-gray-500 text-sm">&copy; 2025 An Vu. Built with a touch of tech.</p>
     </footer>
 
     <script>
-        const experienceData = [
-            {
-                type: 'Work',
-                title: 'Data Operator',
-                company: 'Corporate Register LTD',
-                date: 'Apr 2022 - Sep 2024',
-                location: 'Remote',
-                details: [
-                    'Labeled and categorized ESG reports for 10,000+ companies, streamlining data retrieval via Microsoft Access.',
-                    'Automated data extraction and transformation processes using Python, reducing manual work by 20%.',
-                    'Created Power BI dashboards for ESG metric visualization and benchmarking.'
-                ]
-            },
-            {
-                type: 'Project',
-                title: 'Auto-Summarizer for Financial Reports',
-                company: 'Personal Project',
-                date: 'Project',
-                tech: 'OpenAI API, LangChain, Python, Pandas',
-                details: [
-                    'Developed a pipeline to scrape and summarise quarterly earnings reports using OpenAI and LangChain.',
-                    'Enabled executives to grasp key insights quickly, cutting down report reading time by 70%.'
-                ]
-            },
-            {
-                type: 'Work',
-                title: 'Remote Data Analytics Intern',
-                company: 'Hash Analytics',
-                date: 'Jun 2020 - Sep 2020',
-                location: 'London',
-                details: [
-                    'Conducted in-depth data analysis on employee datasets to identify key drivers of attrition and predict future trends, achieving 85% accuracy and empowering HR teams with actionable insights.'
-                ]
-            },
-            {
-                type: 'Project',
-                title: 'E-commerce Sales Performance Dashboard',
-                company: 'Personal Project',
-                date: 'Project',
-                tech: 'Power BI, SQL, Excel',
-                details: [
-                    'Developed interactive Power BI dashboards to visualize e-commerce sales KPIs (profit, order count, product performance).',
-                    'Enabled data-driven insights into sales trends and customer segments, guiding marketing strategy and inventory decisions.'
-                ]
-            },
-            {
-                type: 'Project',
-                title: 'HR Analytics: Employee Attrition Problem',
-                company: 'Personal Project',
-                date: 'Project',
-                tech: 'Python, Jupyter Notebook, Tableau, Git',
-                details: [
-                    'Conducted in-depth data analysis on employee datasets to identify key drivers of attrition and predict future trends with 85% accuracy.',
-                    'Utilized Python libraries such as Pandas and Scikit-learn for data cleaning, feature engineering, and predictive modeling.',
-                    'Created interactive dashboards in Tableau to visualize findings, improving stakeholder decision-making.'
-                ]
-            },
-            {
-                type: 'Work',
-                title: 'Administrative Services Intern',
-                company: 'Eastleigh College',
-                date: 'Jun 2019 - Sep 2019',
-                location: 'Southampton',
-                details: [
-                    'Executed data entry and categorization for 150+ student applications daily with 99% accuracy, enhancing enrollment efficiency by 10%.',
-                    'Organized and facilitated daily tutor meetings and ensured proper documentation for student interviews.'
-                ]
-            }
-        ];
-
-        const educationData = [
-            {
-                degree: 'MSc Global Financial Trading with EPP',
-                institution: 'Coventry University London',
-                date: 'Sep 2021 - Jun 2023'
-            },
-            {
-                degree: 'BSc in Computer Science',
-                institution: 'University of Southampton',
-                date: 'Sep 2018 - Jun 2021'
-            },
-            {
-                degree: 'A-Level Programme',
-                institution: 'Bellerbys College',
-                date: 'Sep 2016 - Jun 2018',
-                details: 'GPA: A*A*A'
-            },
-            {
-                degree: 'Data Analyst in Python Certificate',
-                institution: 'Codecademy',
-                date: 'Jan 2020'
-            },
-            {
-                degree: 'Silver Certificate',
-                institution: 'UKMT Senior Mathematical Challenge 2017',
-                date: 'Award'
-            },
-            {
-                degree: '40% Tuition Scholarship',
-                institution: 'Bellerbys College',
-                date: 'Award'
-            }
-        ];
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const experienceContainer = document.querySelector('#experience .space-y-8');
-            experienceData.forEach(item => {
-                const techStack = item.tech ? `<p class="mt-2 text-xs font-semibold text-blue-600 tracking-wider uppercase">${item.tech}</p>` : '';
-                const itemHTML = `
-                    <div class="timeline-item relative pl-8 sm:pl-12 py-4 group cursor-pointer border-l-2 border-slate-200 hover:border-blue-500">
-                        <div class="absolute top-5 left-[-9px] w-4 h-4 bg-white border-2 border-slate-200 rounded-full group-hover:border-blue-500 transition-colors"></div>
-                        <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
-                        <p class="text-sm font-medium text-slate-500">${item.company} | ${item.date}</p>
-                        ${techStack}
-                        <div class="details text-sm text-slate-600 mt-2">
-                            <ul class="list-disc list-inside space-y-1">
-                                ${item.details.map(d => `<li>${d}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                `;
-                experienceContainer.innerHTML += itemHTML;
+        // Typed.js initialization
+        document.addEventListener('DOMContentLoaded', function(){
+            var typed = new Typed('#typed-subtitle', {
+                strings: ['Data Specialist', 'Automation Expert', 'Content Analyst'],
+                typeSpeed: 50,
+                backSpeed: 30,
+                backDelay: 2000,
+                loop: true
             });
-
-            document.querySelectorAll('.timeline-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    item.classList.toggle('active');
-                });
-            });
-
-            const educationContainer = document.getElementById('education-container');
-             educationData.forEach(item => {
-                const detailsHTML = item.details ? `<p class="mt-1 text-sm font-bold text-blue-600">${item.details}</p>` : '';
-                const itemHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-bold text-slate-800">${item.degree}</h3>
-                        <p class="text-sm text-slate-500">${item.institution}</p>
-                        <p class="text-sm text-slate-400 mt-1">${item.date}</p>
-                        ${detailsHTML}
-                    </div>
-                `;
-                educationContainer.innerHTML += itemHTML;
-            });
-            
-            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
-            new Chart(skillsCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Python', 'SQL', 'Power BI', 'Tableau', 'Gen AI (OpenAI, LangChain)', 'Data Analysis', 'Process Automation'],
-                    datasets: [{
-                        label: 'Skill Proficiency',
-                        data: [90, 85, 80, 75, 70, 90, 85],
-                        backgroundColor: 'rgba(37, 99, 235, 0.7)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.x !== null) {
-                                        label += 'Advanced Proficiency';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                             display: false
-                        },
-                        y: {
-                           grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-
-            const animateValue = (obj, start, end, duration) => {
-                let startTimestamp = null;
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
-                    if (progress < 1) {
-                        window.requestAnimationFrame(step);
-                    }
-                };
-                window.requestAnimationFrame(step);
-            };
-
-            const metric1 = document.getElementById('metric1');
-            const metric2 = document.getElementById('metric2');
-            const metric3 = document.getElementById('metric3');
-
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        animateValue(metric1, 0, 10000, 2000);
-                        animateValue(metric2, 0, 20, 2000);
-                        animateValue(metric3, 0, 85, 2000);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.5 });
-            
-            observer.observe(document.getElementById('highlights'));
-
-            const sections = document.querySelectorAll('main section');
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            const activateNavLink = (id) => {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.add('active');
-                    }
-                });
-            };
-
-            const sectionObserver = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        activateNavLink(entry.target.id);
-                    }
-                });
-            }, { rootMargin: '-30% 0px -70% 0px'});
-
-            sections.forEach(section => sectionObserver.observe(section));
         });
+
+        // Reveal on scroll
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150; // distance from bottom of screen
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add('active');
+                } else {
+                    reveals[i].classList.remove('active');
+                }
+            }
+        }
+        window.addEventListener('scroll', reveal);
+        reveal(); // run on page load
     </script>
+
+</body>
+</html>
 </body>
 </html>
